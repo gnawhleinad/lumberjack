@@ -92,8 +92,9 @@ function sendLogs(channel, nick, lastSeen, now) {
 
 function getLastSeen(channel, nick, callback) {
     var now = new Date();
-    QuitLog.find({nick: nick})
-	.where('channel').equals('all')
+    Log.find({nick: nick})
+        .where('_type').in(['PartLog', 'QuitLog', 'KickLog', 'KillLog'])
+	.where('channel').in(['all', channel])
 	.where('timestamp').lte(now)
 	.sort({'timestamp': -1})
 	.limit(1)
