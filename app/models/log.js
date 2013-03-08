@@ -3,9 +3,10 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var LogSchema = new Schema({
-    timestamp: {type: Date, default: Date.now},
-    channel: {type: String, default: 'all'},
+    timestamp: {type: Date, default: Date.now, required: true},
+    channel: {type: String, default: 'all', required: true},
     nick: {type: String, default: ''},
+    access: {type: String, enum: ['@', '%', '+', ''], default: ''},
     user: {type: String, default: ''},
     host: {type: String, default: ''}
 }, 

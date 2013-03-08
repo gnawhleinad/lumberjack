@@ -8,7 +8,7 @@ var MessageLogSchema = log.LogSchema.extend({
 });
 
 MessageLogSchema.virtual('irssi').get(function() {
-    return util.format('<%s> %s', this.nick, this.message);
+    return util.format('<%s%s> %s', this.access || '', this.nick, this.message);
 });
 
 mongoose.model('MessageLog', MessageLogSchema);

@@ -84,6 +84,7 @@ function sendLogs(channel, nick, lastSeen, now) {
 	.exec(function(err, logs) {
 	    if (err) return;
 	    if (!logs) return;
+	    client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
 	    logs.forEach(function(log) {
 		client.say(nick, log.irssi);
 	    });
@@ -166,14 +167,25 @@ client.addListener('kill', function(nick, reason, channels, message) {
 
 client.addListener('message', function(nick, to, text, message) {
     if (to === config.irc.nick) return;
-    var messageLog = new MessageLog({
-	channel: to,
-	nick: message.nick,
-	user: message.user,
-	host: message.host,
-	message: text
+    client.whois(message.nick, function(whois) {
+	var channels = whois.channels;
+	channels.forEach(function(channel) {
+	    var access = channel.charAt(0);
+	    var channel = channel.substring(1);
+	    if (access !== '#' && channel === to) {
+		var messageLog = new MessageLog({
+		    channel: channel,
+		    nick: message.nick,
+		    access: access,
+		    user: message.user,
+		    host: message.host,
+		    message: text
+		});
+		messageLog.save();
+		return;
+	    }
+	});
     });
-    messageLog.save();
 });
 
 client.addListener('notice', function(nick, to, text, message) {
