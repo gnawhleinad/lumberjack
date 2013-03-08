@@ -7,7 +7,7 @@ var irc = require('irc'),
     moment = require('moment');
 
 process.on('uncaughtException', function(err) {
-    console.log('Uncaught exception: ' + err);
+    console.log('Uncaught exception: ', err);
 });
 
 mongoose.connect(config.db);
@@ -31,6 +31,10 @@ var ModeLog = mongoose.model('ModeLog');
 
 var client = new irc.Client(config.irc.server, config.irc.nick, config.irc.options);
 client.connect();
+
+client.addListener('error', function(message) {
+    console.log('Error: ', message);
+});
 
 client.addListener('names', function(channel, nicks) {
     var nickList = [];
@@ -80,7 +84,7 @@ function sendLogs(channel, nick, lastSeen, now) {
     Log.find()
 	.where('channel').in(['all', channel])
 	.where('timestamp').lte(now).gt(lastSeen)
-	.sort({'timestamp': 1})
+	.sort({'timestamp': 'ascending'})
 	.exec(function(err, logs) {
 	    if (err) return;
 	    if (!logs) return;
@@ -93,16 +97,17 @@ function sendLogs(channel, nick, lastSeen, now) {
 
 function getLastSeen(channel, nick, callback) {
     var now = new Date();
-    Log.find({nick: nick})
+    Log.where('nick').equals(nick)
         .where('_type').in(['PartLog', 'QuitLog', 'KickLog', 'KillLog'])
 	.where('channel').in(['all', channel])
 	.where('timestamp').lte(now)
-	.sort({'timestamp': -1})
-	.limit(1)
-	.exec(function(err, lastQuit) {
+	.sort({'timestamp': 'descending'})
+        .select('timestamp')
+	.findOne(function(err, lastSeen) {
+	    console.log('nick: %s, channel: %s, lastseen: %s', nick, channel, lastSeen);
 	    if (err) return;
-	    if (!lastQuit) return;
-	    callback(lastQuit[0].timestamp, now);
+	    if (!lastSeen) return;
+	    callback(lastSeen.timestamp, now);
 	});
 };
 
@@ -144,18 +149,23 @@ client.addListener('quit', function(nick, reason, channels, message) {
 });
 
 client.addListener('kick', function(channel, nick, by, reason, message) {
-    var kickLog = new KickLog({
-	channel: channel,
-	nick: message.nick,
-	user: message.user,
-	host: message.host,
-	by: by,
-	reason: reason || ''
+    var now = new Date();
+    client.whois(nick, function(whois) {
+	var kickLog = new KickLog({
+	    timestamp: now,
+	    channel: channel,
+	    nick: whois.nick,
+	    user: whois.user,
+	    host: whois.host,
+	    by: by,
+	    reason: reason || ''
+	});
+	kickLog.save();
     });
-    kickLog.save();
 });
 
 client.addListener('kill', function(nick, reason, channels, message) {
+    // this is probably wrong, need to test...
     var killLog = new KillLog({
 	nick: message.nick,
 	user: message.user,
@@ -172,11 +182,15 @@ client.addListener('message', function(nick, to, text, message) {
 	var channels = whois.channels;
 	channels.forEach(function(channel) {
 	    var access = channel.charAt(0);
-	    var channel = channel.substring(1);
-	    if (access !== '#' && channel === to) {
+	    if (access === '#') {
+		access = '';
+	    } else {
+		channel = channel.substring(1);
+	    }
+	    if (to === channel) {
 		var messageLog = new MessageLog({
 		    timestamp: now,
-		    channel: channel,
+		    channel: to,
 		    nick: message.nick,
 		    access: access,
 		    user: message.user,
@@ -184,7 +198,6 @@ client.addListener('message', function(nick, to, text, message) {
 		    message: text
 		});
 		messageLog.save();
-		return;
 	    }
 	});
     });
