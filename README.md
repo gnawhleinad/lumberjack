@@ -16,3 +16,8 @@ lumberjack is an irc logger bot.
   - Log an additional channel (permanently or temporarily)
   - Query logs
 
+## Testing Environment
+
+- debian-6.0.6
+- ircd-hybrid 7.2.2
+
