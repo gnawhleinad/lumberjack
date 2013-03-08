@@ -167,6 +167,7 @@ client.addListener('kill', function(nick, reason, channels, message) {
 
 client.addListener('message', function(nick, to, text, message) {
     if (to === config.irc.nick) return;
+    var now = new Date();
     client.whois(message.nick, function(whois) {
 	var channels = whois.channels;
 	channels.forEach(function(channel) {
@@ -174,6 +175,7 @@ client.addListener('message', function(nick, to, text, message) {
 	    var channel = channel.substring(1);
 	    if (access !== '#' && channel === to) {
 		var messageLog = new MessageLog({
+		    timestamp: now,
 		    channel: channel,
 		    nick: message.nick,
 		    access: access,
