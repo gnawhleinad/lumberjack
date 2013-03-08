@@ -16,5 +16,9 @@
 		  "mongoose"              : ">=3.5.7",
 		  "mongoose-schema-extend": ">=0.1.3",
 		  "moment"                : ">=2.0.0"
+	},
+	"engines": {
+		   "node": ">=0.8.x",
+		   
 	}
 }
