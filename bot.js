@@ -104,7 +104,6 @@ function getLastSeen(channel, nick, callback) {
 	.sort({'timestamp': 'descending'})
         .select('timestamp')
 	.findOne(function(err, lastSeen) {
-	    console.log('nick: %s, channel: %s, lastseen: %s', nick, channel, lastSeen);
 	    if (err) return;
 	    if (!lastSeen) return;
 	    callback(lastSeen.timestamp, now);
