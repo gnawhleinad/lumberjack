@@ -9,7 +9,7 @@ var ModeLogSchema = log.LogSchema.extend({
 });
 
 ModeLogSchema.virtual('irssi').get(function() {
-    if (this.argument) {
+    if (this.target) {
 	return util.format('-!- mode/%s [%s %s] by %s', this.channel, this.mode, this.target, this.nick);
     } else {
 	return util.format('-!- mode/%s [%s] by %s', this.channel, this.mode, this.nick);
