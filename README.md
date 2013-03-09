@@ -15,7 +15,7 @@ lumberjack is an irc logger bot.
 - Commands for bot
   - Log an additional channel (permanently or temporarily)
   - Query logs
-  - Toggle log types (topic, join, part, quit, kick, kill, message, notice, mode)
+  - Toggle on/off log events on replay (topic, join, part, quit, kick, kill, message, notice, mode)
 
 ## Testing Environment
 
