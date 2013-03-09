@@ -1,4 +1,5 @@
 var irc = require('irc'),
+    async = require('async'),
     mongoose = require('mongoose'),
     env = process.env.NODE_ENV || 'development',   
     config = require('./config/config')[env],
@@ -95,8 +96,7 @@ function sendLogs(channel, nick, lastSeen, now) {
 	});
 };
 
-function getLastSeen(channel, nick, callback) {
-    var now = new Date();
+function getLastSeen(channel, nick, now, callback) {
     Log.where('nick').equals(nick)
         .where('_type').in(['PartLog', 'QuitLog', 'KickLog', 'KillLog'])
 	.where('channel').in(['all', channel])
@@ -111,19 +111,26 @@ function getLastSeen(channel, nick, callback) {
 };
 
 client.addListener('join', function(channel, nick, message) {
-    if (nick !== config.irc.nick) {
-	getLastSeen(channel, nick, function(lastSeen, now) {
-	    sendLogs(channel, nick, lastSeen, now);
-	});
-    }
-
-    var joinLog = new JoinLog({
-	channel: channel,
-	nick: message.nick,
-	user: message.user,
-	host: message.host
-    });
-    joinLog.save();
+    var now = new Date();
+    async.parallel([
+	function() {
+	    if (nick !== config.irc.nick) {
+		getLastSeen(channel, nick, now, function(lastSeen, now) {
+		    sendLogs(channel, nick, lastSeen, now);
+		});
+	    }
+	},
+	function() {
+	    var joinLog = new JoinLog({
+		timestamp: now,
+		channel: channel,
+		nick: message.nick,
+		user: message.user,
+		host: message.host
+	    });
+	    joinLog.save();
+	}
+    ]);
 });
 
 client.addListener('part', function(channel, nick, reason, message) {
