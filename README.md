@@ -20,5 +20,6 @@ lumberjack is an irc logger bot.
 ## Testing Environment
 
 - debian-6.0.6
+- mongodb-2.2.2
 - ircd-hybrid 7.2.2
 
