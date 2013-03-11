@@ -15,6 +15,33 @@ var LogSchema = new Schema({
     discriminatorKey: '_type' 
 });
 
+LogSchema.statics = {
+    getLastSeen: function(channel, nick, now, callback) {
+	this.where('nick').equals(nick)
+            .where('_type').in(['PartLog', 'QuitLog', 'KickLog', 'KillLog'])
+	    .where('channel').in(['all', channel])
+	    .where('timestamp').lte(now)
+	    .sort({'timestamp': 'descending'})
+            .select('timestamp')
+	    .findOne(function(err, lastSeen) {
+		if (err) return;
+		if (!lastSeen) return;
+		callback(lastSeen.timestamp);
+	    });
+    },
+    getLogsFrom: function(channel, nick, from, now, callback) {
+	this.find()
+	    .where('channel').in(['all', channel])
+	    .where('timestamp').lte(now).gt(from)
+	    .sort({'timestamp': 'ascending'})
+	    .exec(function(err, logs) {
+		if (err) return;
+		if (!logs) return;
+		callback(logs);
+	    });
+    }
+};
+
 mongoose.model('Log', LogSchema);
 
 exports.LogSchema = LogSchema;

@@ -1,11 +1,12 @@
 var irc = require('irc'),
     async = require('async'),
     mongoose = require('mongoose'),
-    env = process.env.NODE_ENV || 'development',   
-    config = require('./config/config')[env],
     fs = require('fs'),
     util = require('util'),
     moment = require('moment');
+
+var env = process.env.NODE_ENV || 'development',
+    config = require('./config/config')[env];
 
 process.on('uncaughtException', function(err) {
     console.log('Uncaught exception: ', err);
@@ -81,42 +82,18 @@ client.addListener('topic', function(channel, topic, nick, message) {
     topicLog.save();
 });
 
-function sendLogs(channel, nick, lastSeen, now) {
-    Log.find()
-	.where('channel').in(['all', channel])
-	.where('timestamp').lte(now).gt(lastSeen)
-	.sort({'timestamp': 'ascending'})
-	.exec(function(err, logs) {
-	    if (err) return;
-	    if (!logs) return;
-	    client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
-	    logs.forEach(function(log) {
-		client.say(nick, log.irssi);
-	    });
-	});
-};
-
-function getLastSeen(channel, nick, now, callback) {
-    Log.where('nick').equals(nick)
-        .where('_type').in(['PartLog', 'QuitLog', 'KickLog', 'KillLog'])
-	.where('channel').in(['all', channel])
-	.where('timestamp').lte(now)
-	.sort({'timestamp': 'descending'})
-        .select('timestamp')
-	.findOne(function(err, lastSeen) {
-	    if (err) return;
-	    if (!lastSeen) return;
-	    callback(lastSeen.timestamp, now);
-	});
-};
-
 client.addListener('join', function(channel, nick, message) {
     var now = new Date();
     async.parallel([
 	function() {
 	    if (nick !== config.irc.nick) {
-		getLastSeen(channel, nick, now, function(lastSeen, now) {
-		    sendLogs(channel, nick, lastSeen, now);
+		Log.getLastSeen(channel, nick, now, function(lastSeen) {
+		    Log.getLogsFrom(channel, nick, lastSeen, now, function(logs) {
+			client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
+			logs.forEach(function(log) {
+			    client.say(nick, log.irssi);
+			});		
+		    });
 		});
 	    }
 	},
