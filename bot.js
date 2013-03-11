@@ -181,6 +181,7 @@ client.addListener('message', function(nick, to, text, message) {
 		    message: text
 		});
 		messageLog.save();
+		return;
 	    }
 	});
     });
