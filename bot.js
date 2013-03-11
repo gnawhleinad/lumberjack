@@ -87,7 +87,7 @@ client.addListener('join', function(channel, nick, message) {
     async.parallel([
 	function() {
 	    if (nick !== config.irc.nick) {
-		Log.getLastSeen(channel, nick, now, function(lastSeen) {
+		Log.getLastSeen(channel, now, function(lastSeen) {
 		    Log.getLogsFrom(channel, nick, lastSeen, now, function(logs) {
 			client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
 			logs.forEach(function(log) {

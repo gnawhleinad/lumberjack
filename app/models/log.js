@@ -16,11 +16,11 @@ var LogSchema = new Schema({
 });
 
 LogSchema.statics = {
-    getLastSeen: function(channel, nick, now, callback) {
+    getLastSeen: function(channel, nick, from, callback) {
 	this.where('nick').equals(nick)
             .where('_type').in(['PartLog', 'QuitLog', 'KickLog', 'KillLog'])
 	    .where('channel').in(['all', channel])
-	    .where('timestamp').lte(now)
+	    .where('timestamp').lte(from)
 	    .sort({'timestamp': 'descending'})
             .select('timestamp')
 	    .findOne(function(err, lastSeen) {
@@ -29,10 +29,10 @@ LogSchema.statics = {
 		callback(lastSeen.timestamp);
 	    });
     },
-    getLogsFrom: function(channel, nick, from, now, callback) {
+    getLogsFrom: function(channel, from, to, callback) {
 	this.find()
 	    .where('channel').in(['all', channel])
-	    .where('timestamp').lte(now).gt(from)
+	    .where('timestamp').lte(to).gt(from)
 	    .sort({'timestamp': 'ascending'})
 	    .exec(function(err, logs) {
 		if (err) return;
