@@ -92,7 +92,8 @@ client.addListener('join', function(channel, nick, message) {
 			client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
 			logs.forEach(function(log) {
 			    client.say(nick, log.irssi);
-			});		
+			});
+			client.say(nick, util.format('%s/query?c=%s&f=%s&t=%s', config.web, channel.substring(1), moment(lastSeen).format('X'), moment(now).format('X')));
 		    });
 		});
 	    }

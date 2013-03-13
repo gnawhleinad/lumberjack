@@ -18,6 +18,7 @@ module.exports = {
 		messageSplit: 512
 	    }
 	},
+	web: 'http://lumberjack',
 	db: 'mongodb://localhost/lumberjack-dev'
     }
 };
