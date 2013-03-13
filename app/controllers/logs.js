@@ -11,7 +11,7 @@ exports.query = function(req, res) {
     var sType = 'YYYY-MM-DD';
     var uType = 'X';
 
-    var channel = req.query.c;
+    var channel = '#' + req.query.c;
     var query = {
 	from: req.query.f || moment().format(sType),
 	to: req.query.t || moment().format(sType)
@@ -31,12 +31,12 @@ exports.query = function(req, res) {
     if (from.isAfter(to)) {
 	return res.send(400, util.format('f (from) "%s" is after t (to) "%s"', from.format(sType)), to.format(sType));
     }
-    
+
     Log.getLogsFrom(channel, from, to, function(logs) {
 	res.render('logs/results', {
-	    channel: '#'+channel,
-	    from: from.format(sType),
-	    to: to.format(sType),
+	    channel: channel,
+	    from: from.utc().format(),
+	    to: to.utc().format(),
 	    logs: logs
 	});
     });

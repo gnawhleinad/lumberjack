@@ -2,7 +2,8 @@ var mongoose = require('mongoose'),
     extend = require('mongoose-schema-extend'),
     log = require('./log'),
     util = require('util'),
-    moment = require('moment');
+    moment = require('moment'),
+    md = require('node-markdown').Markdown;
 
 var TopicLogSchema = log.LogSchema.extend({
     topic: String,
@@ -17,8 +18,21 @@ var TopicLogSchema = log.LogSchema.extend({
 //     return util.format('%s\n%s', topic, setBy);
 // });
 
+function irssi(topicLog, markdown) {
+    markdown = markdown || false;
+
+    var print = '-!- %s changed the topic of %s to: %s';
+    if (markdown) print = '-!- **%s** changed the topic of **%s** to: %s';
+
+    return util.format(print, topicLog.nick, topicLog.channel, topicLog.topic);
+};
+
 TopicLogSchema.virtual('irssi').get(function() {
-    return util.format('-!- %s changed the topic of %s to: %s', this.nick, this.channel, this.topic);
+    return irssi(this);
+});
+
+TopicLogSchema.virtual('irssi_markdown').get(function() {
+    return md(irssi(this, true));
 });
 
 mongoose.model('TopicLog', TopicLogSchema);
