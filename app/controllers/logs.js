@@ -28,10 +28,8 @@ exports.query = function(req, res) {
 
     for (var ft in query) {
 	if (sRegex.exec(query[ft])) {
-	    console.log('yay');
 	    ready[ft] = moment(query[ft], sType);
 	} else if (uRegex.exec(query[ft])) {
-	    console.log('nay');
 	    ready[ft] = moment.unix(query[ft]);
 	} else {
 	    return res.send(400, util.format('Invalid %s (%s) parameter', ft.charAt(0), ft));
@@ -40,9 +38,6 @@ exports.query = function(req, res) {
 
     var from = ready.from;
     var to = ready.to;
-
-    console.log(from);
-    console.log(to);
 
     if (from.isAfter(to)) {
 	return res.send(400, util.format('f (from) "%s" is after t (to) "%s"', from.format(sType)), to.format(sType));
