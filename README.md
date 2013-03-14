@@ -25,4 +25,4 @@ lumberjack is an irc logger bot.
 - debian-6.0.6
 - mongodb-2.2.2
 - ircd-hybrid-7.2.2
-- Chromium-24.0.x
+- chromium-browser-24.0.x
