@@ -49,7 +49,9 @@ function irssi(namesLog, markdown) {
     if (markdown) countPrint = '-!- **%s**: **%s**: Total of **%d** nicks [**%d** ops, **%d** halfops, **%d** voices, **%d** normal]';
     var count = util.format(countPrint, config.irc.nick, namesLog.channel, numTotal, numOps, numHalfops, numVoices, numNormal);
     
-    return util.format('%s\n%s\n%s', usersChannel, users, count);
+    var result = util.format('%s\n%s\n%s', usersChannel, users, count);
+    if (markdown) result = util.format('%s  \n%s  \n%s', usersChannel, users, count);
+    return result;
 };
 
 NamesLogSchema.virtual('irssi').get(function() {
@@ -57,7 +59,7 @@ NamesLogSchema.virtual('irssi').get(function() {
 });
 
 NamesLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true), true, 'strong|em');
+    return md(irssi(this, true), true, 'strong|em|br');
 });
 
 mongoose.model('NamesLog', NamesLogSchema);
