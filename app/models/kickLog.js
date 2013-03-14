@@ -23,7 +23,7 @@ KickLogSchema.virtual('irssi').get(function() {
 });
 
 KickLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true));
+    return md(irssi(this, true), true, 'strong|em');
 });
 
 mongoose.model('KickLog', KickLogSchema);

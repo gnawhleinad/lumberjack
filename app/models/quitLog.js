@@ -22,7 +22,7 @@ QuitLogSchema.virtual('irssi').get(function() {
 });
 
 QuitLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true));
+    return md(irssi(this, true), true, 'strong|em');
 });
 
 mongoose.model('QuitLog', QuitLogSchema);

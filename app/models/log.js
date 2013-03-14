@@ -1,6 +1,9 @@
 var mongoose = require('mongoose'),
     extend = require('mongoose-schema-extend'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    util = require('util'),
+    moment = require('moment'),
+    md = require('node-markdown').Markdown;
 
 var LogSchema = new Schema({
     timestamp: {type: Date, default: Date.now, required: true},
@@ -13,6 +16,10 @@ var LogSchema = new Schema({
 { 
     collection: 'logs', 
     discriminatorKey: '_type' 
+});
+
+LogSchema.virtual('timestamp_markdown').get(function() {
+    return md(util.format('*%s*', moment(this.timestamp).format('HH:mm')), true, 'strong|em');
 });
 
 LogSchema.statics = {

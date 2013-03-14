@@ -22,7 +22,7 @@ MessageLogSchema.virtual('irssi').get(function() {
 });
 
 MessageLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true));
+    return md(irssi(this, true), true, 'strong|em');
 });
 
 mongoose.model('MessageLog', MessageLogSchema);

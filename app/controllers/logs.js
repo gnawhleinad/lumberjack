@@ -49,7 +49,7 @@ exports.query = function(req, res) {
     }
 
     Log.getLogsFrom(channel, from, to, function(logs) {
-	res.render('logs/results', {
+	res.render('logs/query', {
 	    channel: channel,
 	    from: from.utc().format(),
 	    to: to.utc().format(),

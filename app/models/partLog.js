@@ -22,7 +22,7 @@ PartLogSchema.virtual('irssi').get(function() {
 });
 
 PartLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true));
+    return md(irssi(this, true), true, 'strong|em');
 });
 
 mongoose.model('PartLog', PartLogSchema);
