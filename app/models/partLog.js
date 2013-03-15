@@ -1,8 +1,7 @@
 var mongoose = require('mongoose'),
     extend = require('mongoose-schema-extend'),
     log = require('./log'),
-    util = require('util'),
-    md = require('node-markdown').Markdown;
+    chainsaw = require('../../lib/chainsaw');
 
 var PartLogSchema = log.LogSchema.extend({
     reason: String
@@ -11,10 +10,10 @@ var PartLogSchema = log.LogSchema.extend({
 function irssi(partLog, markdown) {
     markdown = markdown || false;
 
-    var print = '-!- %s [%s@%s] has left %s [%s]';
-    if (markdown) print = '-!- **%s** [%s@%s] has left **%s** [%s]';
+    var format = '-!- %s [%s@%s] has left %s [%s]';
+    if (markdown) format = '-!- **%s** [%s@%s] has left **%s** [%s]';
 
-    return util.format(print, partLog.nick, partLog.user, partLog.host, partLog.channel, partLog.reason);
+    return chainsaw.print(format, markdown, partLog.nick, partLog.user, partLog.host, partLog.channel, partLog.reason);
 };
 
 PartLogSchema.virtual('irssi').get(function() {
@@ -22,7 +21,7 @@ PartLogSchema.virtual('irssi').get(function() {
 });
 
 PartLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true), true, 'strong|em');
+    return irssi(this, true);
 });
 
 mongoose.model('PartLog', PartLogSchema);

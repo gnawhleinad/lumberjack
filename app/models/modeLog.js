@@ -1,8 +1,7 @@
 var mongoose = require('mongoose'),
     extend = require('mongoose-schema-extend'),
     log = require('./log'),
-    util = require('util'),
-    md = require('node-markdown').Markdown;
+    chainsaw = require('../../lib/chainsaw');
 
 var ModeLogSchema = log.LogSchema.extend({
     mode: String,
@@ -13,15 +12,15 @@ function irssi(modeLog, markdown) {
     markdown = markdown || false;
 
     if (modeLog.target) {
-	var print = '-!- mode/%s [%s %s] by %s';
-	if (markdown) print = '-!- mode/%s [%s %s] by **%s**';
+	var format = '-!- mode/%s [%s %s] by %s';
+	if (markdown) format = '-!- mode/%s [%s %s] by **%s**';
 
-	return util.format(print, modeLog.channel, modeLog.mode, modeLog.target, modeLog.nick);
+	return chainsaw.print(format, markdown, modeLog.channel, modeLog.mode, modeLog.target, modeLog.nick);
     } else {
-	var print = '-!- mode/%s [%s] by %s';
-	if (markdown) print = '-!- mode/%s [%s] by **%s**';
+	var format = '-!- mode/%s [%s] by %s';
+	if (markdown) format = '-!- mode/%s [%s] by **%s**';
 
-	return util.format(print, modeLog.channel, modeLog.mode, modeLog.nick);
+	return chainsaw.print(format, markdown, modeLog.channel, modeLog.mode, modeLog.nick);
     }
 };
 
@@ -30,7 +29,7 @@ ModeLogSchema.virtual('irssi').get(function() {
 });
 
 ModeLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true), true, 'strong|em');
+    return irssi(this, true);
 });
 
 mongoose.model('ModeLog', ModeLogSchema);

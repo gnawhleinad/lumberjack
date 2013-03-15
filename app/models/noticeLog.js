@@ -1,8 +1,7 @@
 var mongoose = require('mongoose'),
     extend = require('mongoose-schema-extend'),
     log = require('./log'),
-    util = require('util'),
-    md = require('node-markdown').Markdown;
+    chainsaw = require('../../lib/chainsaw');
 
 var NoticeLogSchema = log.LogSchema.extend({
     notice: String
@@ -11,10 +10,10 @@ var NoticeLogSchema = log.LogSchema.extend({
 function irssi(noticeLog, markdown) {
     markdown = markdown || false;
 
-    var print = '-%s:%s- %s';
-    if (markdown) print = '-%s:%s- %s';
+    var format = '-%s:%s- %s';
+    if (markdown) format = '-%s:%s- %s';
 
-    return util.format(print, noticeLog.nick, noticeLog.channel, noticeLog.notice);
+    return chainsaw.print(format, markdown, noticeLog.nick, noticeLog.channel, noticeLog.notice);
 };
 
 NoticeLogSchema.virtual('irssi').get(function() {
@@ -22,7 +21,7 @@ NoticeLogSchema.virtual('irssi').get(function() {
 });
 
 NoticeLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true), true, 'strong|em');
+    return irssi(this, true);
 });
 
 mongoose.model('NoticeLog', NoticeLogSchema);

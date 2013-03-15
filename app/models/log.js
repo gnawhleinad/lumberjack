@@ -1,9 +1,8 @@
 var mongoose = require('mongoose'),
     extend = require('mongoose-schema-extend'),
     Schema = mongoose.Schema,
-    util = require('util'),
     moment = require('moment'),
-    md = require('node-markdown').Markdown;
+    chainsaw = require('../../lib/chainsaw');
 
 var LogSchema = new Schema({
     timestamp: {type: Date, default: Date.now, required: true},
@@ -19,7 +18,7 @@ var LogSchema = new Schema({
 });
 
 LogSchema.virtual('timestamp_markdown').get(function() {
-    return md(util.format('*%s*', moment(this.timestamp).format('HH:mm')), true, 'strong|em');
+    return chainsaw.print('*%s*', true, moment(this.timestamp).format('HH:mm'));
 });
 
 LogSchema.statics = {

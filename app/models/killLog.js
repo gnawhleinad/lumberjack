@@ -1,8 +1,7 @@
 var mongoose = require('mongoose'),
     extend = require('mongoose-schema-extend'),
     log = require('./log'),
-    util = require('util'),
-    md = require('node-markdown').Markdown;
+    chainsaw = require('../../lib/chainsaw');
 
 var KillLogSchema = log.LogSchema.extend({
     reason: String
@@ -11,10 +10,10 @@ var KillLogSchema = log.LogSchema.extend({
 function irssi(killLog, markdown) {
     markdown = markdown || false;
 
-    var print = '-!- %s has been killed [%s]';
-    if (markdown) print = '-!- %s has been killed [%s]';
+    var format = '-!- %s has been killed [%s]';
+    if (markdown) format = '-!- %s has been killed [%s]';
 
-    return util.format(print, killLog.nick, killLog.reason);
+    return chainsaw.print(format, markdown, killLog.nick, killLog.reason);
 };
 
 KillLogSchema.virtual('irssi').get(function() {
@@ -22,7 +21,7 @@ KillLogSchema.virtual('irssi').get(function() {
 });
 
 KillLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true), true, 'strong|em');
+    return irssi(this, true);
 });
 
 mongoose.model('KillLog', KillLogSchema);

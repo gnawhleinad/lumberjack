@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     env = process.env.NODE_ENV || 'development',   
     config = require('../../config/config')[env],
     util = require('util'),
-    md = require('node-markdown').Markdown;
+    chainsaw = require('../../lib/chainsaw');
 
 var NamesLogSchema = log.LogSchema.extend({
     nicks: [String]
@@ -13,9 +13,9 @@ var NamesLogSchema = log.LogSchema.extend({
 function irssi(namesLog, markdown) {
     markdown = markdown || false;
 
-    var usersChannelPrint = '[Users %s]';
-    if (markdown) usersChannel = '[Users **%s**]';
-    var usersChannel = util.format(usersChannelPrint, namesLog.channel);
+    var usersChannelFormat = '[Users %s]';
+    if (markdown) usersChannelFormat = '[Users **%s**]';
+    var usersChannel = chainsaw.print(usersChannelFormat, markdown, namesLog.channel);
 
     var users = '';
     var numOps = 0;
@@ -45,13 +45,13 @@ function irssi(namesLog, markdown) {
 	numTotal++;
     });
 
-    var countPrint = '-!- %s: %s: Total of %d nicks [%d ops, %d halfops, %d voices, %d normal]';
-    if (markdown) countPrint = '-!- **%s**: **%s**: Total of **%d** nicks [**%d** ops, **%d** halfops, **%d** voices, **%d** normal]';
-    var count = util.format(countPrint, config.irc.nick, namesLog.channel, numTotal, numOps, numHalfops, numVoices, numNormal);
+    var countFormat = '-!- %s: %s: Total of %d nicks [%d ops, %d halfops, %d voices, %d normal]';
+    if (markdown) countFormat = '-!- **%s**: **%s**: Total of **%d** nicks [**%d** ops, **%d** halfops, **%d** voices, **%d** normal]';
+    var count = chainsaw.print(countFormat, markdown, config.irc.nick, namesLog.channel, numTotal, numOps, numHalfops, numVoices, numNormal);
     
-    var result = util.format('%s\n%s\n%s', usersChannel, users, count);
-    if (markdown) result = util.format('%s  \n%s  \n%s', usersChannel, users, count);
-    return result;
+    var resultFormat = '%s\n%s\n%s';
+    if (markdown) resultFormat = '%s  \n%s  \n%s';
+    return chainsaw.print(resultFormat, markdown, usersChannel, users, count);
 };
 
 NamesLogSchema.virtual('irssi').get(function() {
@@ -59,7 +59,7 @@ NamesLogSchema.virtual('irssi').get(function() {
 });
 
 NamesLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true), true, 'strong|em|br');
+    return irssi(this, true);
 });
 
 mongoose.model('NamesLog', NamesLogSchema);

@@ -1,8 +1,7 @@
 var mongoose = require('mongoose'),
     extend = require('mongoose-schema-extend'),
     log = require('./log'),
-    util = require('util'),
-    md = require('node-markdown').Markdown;
+    chainsaw = require('../../lib/chainsaw');
 
 var KickLogSchema = log.LogSchema.extend({
     by: String,
@@ -12,10 +11,10 @@ var KickLogSchema = log.LogSchema.extend({
 function irssi(kickLog, markdown) {
     markdown = markdown || false;
 
-    var print = '-!- %s was kicked from %s by %s [%s]';
-    if (markdown) print = '-!- %s was kicked from **%s** by **%s** [%s]';
+    var format = '-!- %s was kicked from %s by %s [%s]';
+    if (markdown) format = '-!- %s was kicked from **%s** by **%s** [%s]';
 
-    return util.format(print, kickLog.nick, kickLog.channel, kickLog.by, kickLog.reason);
+    return chainsaw.print(format, markdown, kickLog.nick, kickLog.channel, kickLog.by, kickLog.reason);
 };
 
 KickLogSchema.virtual('irssi').get(function() {
@@ -23,7 +22,7 @@ KickLogSchema.virtual('irssi').get(function() {
 });
 
 KickLogSchema.virtual('irssi_markdown').get(function() {
-    return md(irssi(this, true), true, 'strong|em');
+    return irssi(this, true);
 });
 
 mongoose.model('KickLog', KickLogSchema);
