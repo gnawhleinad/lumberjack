@@ -18,7 +18,10 @@ module.exports = {
 		messageSplit: 512
 	    }
 	},
-	web: 'http://lumberjack',
+	web: {
+	    domain: 'lumberjack',
+	    port: 3000
+	},
 	db: 'mongodb://localhost/lumberjack-dev'
     }
 };

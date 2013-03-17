@@ -22,5 +22,5 @@ require('./config/express')(app, config);
 
 require('./config/routes')(app);
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || config.web.port;
 app.listen(port);

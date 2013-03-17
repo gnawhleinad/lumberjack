@@ -88,12 +88,21 @@ client.addListener('join', function(channel, nick, message) {
 	function() {
 	    if (nick !== config.irc.nick) {
 		Log.getLastSeen(channel, nick, now, function(lastSeen) {
+		    var web = '';
+		    if (config.web.port === 80) {
+			web = util.format('http://%s', config.web.domain);
+		    } else if (config.web.port === 443) {
+			web = util.format('https://%s', config.web.domain);
+		    } else {
+			web = util.format('http://%s:%d', config.web.domain, config.web.port);
+		    }
+
 		    Log.getLogsFrom(channel, lastSeen, now, function(logs) {
 			client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
 			logs.forEach(function(log) {
 			    client.say(nick, log.irssi);
 			});
-			client.say(nick, util.format('%s/query?c=%s&f=%s&t=%s', config.web, channel.substring(1), moment(lastSeen).format('X'), moment(now).format('X')));
+			client.say(nick, util.format('%s/query?c=%s&f=%s&t=%s', web, channel.substring(1), moment(lastSeen).format('X'), moment(now).format('X')));
 		    });
 		});
 	    }
