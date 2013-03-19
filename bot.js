@@ -3,7 +3,8 @@ var irc = require('irc'),
     mongoose = require('mongoose'),
     fs = require('fs'),
     util = require('util'),
-    moment = require('moment');
+    moment = require('moment'),
+    chainsaw = require('./lib/chainsaw');
 
 var env = process.env.NODE_ENV || 'development',
     config = require('./config/config')[env];
@@ -88,15 +89,7 @@ client.addListener('join', function(channel, nick, message) {
 	function() {
 	    if (nick !== config.irc.nick) {
 		Log.getLastSeen(channel, nick, now, function(lastSeen) {
-		    var web = '';
-		    if (config.web.port === 80) {
-			web = util.format('http://%s', config.web.domain);
-		    } else if (config.web.port === 443) {
-			web = util.format('https://%s', config.web.domain);
-		    } else {
-			web = util.format('http://%s:%d', config.web.domain, config.web.port);
-		    }
-
+		    var web = chainsaw.getWebUrl();
 		    Log.getLogsFrom(channel, lastSeen, now, function(logs) {
 			client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
 			logs.forEach(function(log) {
