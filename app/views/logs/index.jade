@@ -1,0 +1,49 @@
+html(lang='en')
+  head
+    script(src='/js/jquery-1.9.1.min.js')
+    script(src='/js/bootstrap.min.js')
+    script(src='/js/bootstrap-datepicker.js')
+    link(rel='stylesheet', href='/css/dejavu.css')
+    link(rel='stylesheet', href='/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/css/bootstrap-responsive.min.css')
+    link(rel='stylesheet', href='/css/datepicker.css')
+  body
+    .container-fluid
+      .row-fluid
+        .span2
+          script
+            $(function() {
+              var now = new Date();
+              var endDate = now.getFullYear().toString()+'-'+(now.getMonth()+1).toString()+'-'+now.getDate().toString();
+      
+              $('.datepicker').datepicker({ 
+                format: 'yyyy-mm-dd',
+                endDate: endDate,
+                autoclose: true,
+                todayBtn: true
+              })
+                .on('changeDate', function() {
+                  $('#date').val($('.datepicker').data('date'));
+                  $('.datepicker').datepicker('hide');
+                  $('.query').change();
+                });
+            });
+          h3 lumberjack
+          div.input-append
+            input.query.span11(type='text', id='date', placeholder='YYYY-MM-DD', readonly)
+            span.datepicker.add-on
+              i.icon-calendar
+          div
+            select.query.span11(id='channel')
+              each channel in channels
+                option(value=channel.substring(1)) #{channel}
+         .span10
+           .content
+           script
+             $('.query').change(function() {
+               var date = $('#date').val();
+               var channel = $('#channel').val();
+               if (date === '') return;
+               var url = '/query?c='+channel+'&o='+date;
+               $('.content').load(url+' .main');              
+             });

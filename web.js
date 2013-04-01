@@ -39,7 +39,7 @@ app.listen(port);
 var job = new cronJob({
     cronTime: '42 00 00 * * *',
     onTick: function() {
-	var yesterday = moment().subtract('days', 1);
+	var yesterday = moment().subtract('days', 1).startOf('day');
 	channels.forEach(function(channel) {
 	    var destination = util.format('%s/public/archive', config.root);
 	    chainsaw.createStaticPage(yesterday, channel.substring(1), destination);

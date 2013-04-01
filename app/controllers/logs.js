@@ -3,6 +3,9 @@ var mongoose = require('mongoose'),
     util = require('util'),
     moment = require('moment');
 
+var env = process.env.NODE_ENV || 'development',
+    config = require('../../config/config')[env];
+
 exports.query = function(req, res) {
     if (req.query.c == null) {
 	return res.send(400, 'No c (channel) parameter');
@@ -21,10 +24,19 @@ exports.query = function(req, res) {
 	to: null
     };
 
-    var query = {
-	from: req.query.f || moment().format(sType),
-	to: req.query.t || moment().format(sType)
-    };
+    var query = {};
+    if (req.query.o) {
+	var date = moment(req.query.o).startOf('day');
+	query = {
+	    from: date.format('YYYY-MM-DD'),
+	    to: date.endOf('day').unix(),
+	};
+    } else {
+	query = {
+	    from: req.query.f || moment().format(sType),
+	    to: req.query.t || moment().format(sType)
+	};
+    }
 
     for (var ft in query) {
 	if (sRegex.exec(query[ft])) {
@@ -50,5 +62,11 @@ exports.query = function(req, res) {
 	    to: to.utc().format(),
 	    logs: logs
 	});
+    });
+};
+
+exports.index = function(req, res) {
+    res.render('logs/index', {
+	channels: config.irc.options.channels
     });
 };

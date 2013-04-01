@@ -19,6 +19,7 @@
 		  "moment"                : ">=2.0.0",
 		  "cron"                  : ">=1.0.1",
 		  "jade"                  : ">=0.28.2",
+		  "less-middleware"       : ">=0.1.9",
 		  "node-markdown"         : ">=0.1.1",
 		  "mkdirp"                : ">=0.3.5"
 	},

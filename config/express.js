@@ -1,4 +1,5 @@
-var express = require('express');
+var express = require('express'),
+    lessMiddleware = require('less-middleware');
 
 module.exports = function(app, config) {
     app.set('showStackError', true);
@@ -9,6 +10,11 @@ module.exports = function(app, config) {
 	    return /json|text|javascript|css/.test(res.getHeader('Content-Type'));
 	},
 	level: 9
+    }));
+
+    app.use(lessMiddleware({ 
+	src: config.root + '/public',
+	compress: true
     }));
     app.use(express.static(config.root + '/public'));
 
