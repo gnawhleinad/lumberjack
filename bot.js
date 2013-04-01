@@ -92,9 +92,11 @@ client.addListener('join', function(channel, nick, message) {
 		    var web = chainsaw.getWebUrl();
 		    Log.getLogsFrom(channel, lastSeen, now, function(logs) {
 			client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
-			logs.forEach(function(log) {
-			    client.say(nick, log.irssi);
-			});
+			if (logs.length <= config.irc.maxMessageEvents) {
+			    logs.forEach(function(log) {
+				client.say(nick, log.irssi);
+			    });
+			}
 			client.say(nick, util.format('%s/query?c=%s&f=%s&t=%s', web, channel.substring(1), moment(lastSeen).format('X'), moment(now).format('X')));
 		    });
 		});

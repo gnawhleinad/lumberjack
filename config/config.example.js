@@ -4,6 +4,7 @@ module.exports = {
 	irc: {
 	    server: 'localhost',
 	    nick: 'lumberjack',
+	    maxMessageEvents: 10,
 	    options: {
 		userName: 'lumberjack',
 		realName: 'lumberjack irc logger bot',
