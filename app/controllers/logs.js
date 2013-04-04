@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
     Log = mongoose.model('Log'),
+    fs = require('fs'),
     util = require('util'),
     moment = require('moment');
 
@@ -24,8 +25,12 @@ exports.query = function(req, res) {
 	to: null
     };
 
+    var force = false;
+
     var query = {};
     if (req.query.o) {
+	force = req.query.hasOwnProperty('force');
+
 	var date = moment(req.query.o).startOf('day');
 	query = {
 	    from: date.format('YYYY-MM-DD'),
@@ -53,6 +58,12 @@ exports.query = function(req, res) {
 
     if (from.isAfter(to)) {
 	return res.send(400, util.format('f (from) "%s" is after t (to) "%s"', from.format(sType)), to.format(sType));
+    } else if (from.isSame(to, 'day') && !force) {
+	var redirect = util.format('/archive/%s/%s/%s/%s.html', channel.substring(1), from.format('YYYY'), from.format('MM'), from.format('DD'));
+	var archive = util.format('%s/public%s', config.root, redirect);
+	if (fs.existsSync(archive)) {
+	    return res.redirect(redirect);
+	}
     }
 
     Log.getLogsFrom(channel, from, to, function(logs) {

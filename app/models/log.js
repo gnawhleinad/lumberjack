@@ -1,6 +1,9 @@
-var mongoose = require('mongoose'),
+var Q = require('q'),
+    async = require('async'),
+    mongoose = require('mongoose'),
     extend = require('mongoose-schema-extend'),
     Schema = mongoose.Schema,
+    _ = require('underscore'),
     moment = require('moment'),
     chainsaw = require('../../lib/chainsaw');
 
@@ -44,6 +47,46 @@ LogSchema.statics = {
 		if (err) return;
 		if (!logs) return;
 		callback(logs);
+	    });
+    },
+    getUniqueTimestamps: function(channel, from, to, callback) {
+	var deferred = Q.defer();
+	this.find()
+	    .where('channel').in(['all', channel])
+	    .where('timestamp').lte(to).gte(from)
+	    .sort({'timestamp': 'ascending'})
+            .select('timestamp')
+	    .exec(function(err, logs) {
+		if (err) return;
+		if (!logs) return;
+
+		var uniques = _.uniq(logs, function(log) {
+		    return moment(log.timestamp).format('YYYY-MM-DD');
+		});
+		uniques = _.map(uniques, function(log) {
+		    return moment(log.timestamp);
+		});
+		async.each(uniques, callback, function(aerr) {
+		    if (aerr) {
+			deferred.reject(aerr);
+		    } else {
+			deferred.resolve(true);
+		    }
+		});
+	    });
+	return deferred.promise;
+    },
+    existsLogsOn: function(channel, on, callback) {
+	var from = moment(on).startOf('day').toDate();
+	var to = moment(on).endOf('day').toDate();
+	this.find()
+	    .where('channel').in(['all', channel])
+	    .where('timestamp').lte(to).gte(from)
+            .select('timestamp')
+	    .count(function(err, count) {
+		if (count >= 1) {
+		    callback();
+		}
 	    });
     }
 };

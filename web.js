@@ -20,6 +20,7 @@ var modelsPath = __dirname + '/app/models';
 fs.readdirSync(modelsPath).forEach(function(file) {
     require(modelsPath+'/'+file);
 });
+var Log = mongoose.model('Log');
 
 var app = express();
 
@@ -40,9 +41,11 @@ var job = new cronJob({
     cronTime: '42 00 00 * * *',
     onTick: function() {
 	var yesterday = moment().subtract('days', 1).startOf('day');
+	var destination = util.format('%s/public/archive', config.root);
 	channels.forEach(function(channel) {
-	    var destination = util.format('%s/public/archive', config.root);
-	    chainsaw.createStaticPage(yesterday, channel.substring(1), destination);
+	    Log.existsLogsOn(channel, yesterday, function () {
+		chainsaw.createStaticPage(yesterday, channel.substring(1), destination);
+	    });
 	});
     },
     start: true
