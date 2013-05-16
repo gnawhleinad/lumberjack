@@ -3,6 +3,7 @@ html(lang='en')
     script(src='/js/jquery-1.9.1.min.js')
     script(src='/js/bootstrap.min.js')
     script(src='/js/bootstrap-datepicker.js')
+    script(src='/js/feller-bunchers.js')
     link(rel='stylesheet', href='/css/dejavu.css')
     link(rel='stylesheet', href='/css/bootstrap.min.css')
     link(rel='stylesheet', href='/css/bootstrap-responsive.min.css')
@@ -37,13 +38,50 @@ html(lang='en')
             select.query.span11(id='channel')
               each channel in channels
                 option(value=channel.substring(1)) #{channel}
+          div
+            label.checkbox
+              input.filter(type='checkbox', id='NamesLog', checked)
+              | Names
+            label.checkbox
+              input.filter(type='checkbox', id='TopicLog', checked)
+              | Topic
+            label.checkbox
+              input.filter(type='checkbox', id='JoinLog', checked)
+              | Join
+            label.checkbox
+              input.filter(type='checkbox', id='PartLog', checked)
+              | Part
+            label.checkbox
+              input.filter(type='checkbox', id='QuitLog', checked)
+              | Quit
+            label.checkbox
+              input.filter(type='checkbox', id='KickLog', checked)
+              | Kick
+            label.checkbox
+              input.filter(type='checkbox', id='KillLog', checked)
+              | Kill
+            label.checkbox
+              input.filter(type='checkbox', id='MessageLog', checked)
+              | Message
+            label.checkbox
+              input.filter(type='checkbox', id='NoticeLog', checked)
+              | Notice
+            label.checkbox
+              input.filter(type='checkbox', id='NickLog', checked)
+              | Nick
+            label.checkbox
+              input.filter(type='checkbox', id='ModeLog', checked)
+              | Mode
          .span10
-           .content
-           script
-             $('.query').change(function() {
-               var date = $('#date').val();
-               var channel = $('#channel').val();
-               if (date === '') return;
-               var url = '/query?c='+channel+'&o='+date;
-               $('.content').load(url+' .main');              
-             });
+           div.content(id='content')
+   script
+    $('.query').change(function() {
+      var date = $('#date').val();
+      var channel = $('#channel').val();
+      if (date === '') return;
+      var url = '/query?c='+channel+'&o='+date;
+      $('.content').load(url+' .main');              
+    });
+    $('.checkbox :input').change(function() {
+      toggleLog($(this).attr('id'));
+    });
