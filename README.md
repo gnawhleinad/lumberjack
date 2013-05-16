@@ -6,13 +6,14 @@ lumberjack is an irc logger bot.
 - Messages the missed events from channel(s) to the user
 - Web interface for the logs
   - View archive
+  - Filter log events (topic, join, part, quit, kick, kill, message, notice, mode)
 
 ## Upcoming Features
 
 - Web interface
   - Query logs
 - Custom settings for users
-  - Toggle on/off log events on replay (topic, join, part, quit, kick, kill, message, notice, mode)
+  - Filter log events on replay (topic, join, part, quit, kick, kill, message, notice, mode)
   - Prepend (once) messages from a channel with topic and list of users
   - Timestamp on messages
   - Timezone
