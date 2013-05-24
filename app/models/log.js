@@ -5,7 +5,8 @@ var Q = require('q'),
     Schema = mongoose.Schema,
     _ = require('underscore'),
     moment = require('moment'),
-    chainsaw = require('../../lib/chainsaw');
+    chainsaw = require('../../lib/chainsaw'),
+    util = require('util');
 
 var LogSchema = new Schema({
     timestamp: {type: Date, default: Date.now, required: true},
@@ -24,6 +25,10 @@ LogSchema.virtual('timestamp_markdown').get(function() {
     return chainsaw.print('*%s*', true, moment(this.timestamp).format('HH:mm'));
 });
 
+LogSchema.virtual('timestamp_unix').get(function() {
+    return moment(this.timestamp).format('X.SSS');
+});
+
 LogSchema.statics = {
     getLastSeen: function(channel, nick, from, callback) {
 	this.where('nick').equals(nick)
@@ -38,14 +43,40 @@ LogSchema.statics = {
 		callback(lastSeen.timestamp);
 	    });
     },
-    getLogsFrom: function(channel, from, to, callback) {
+    getLogsFrom: function(channel, from, to, strict, callback) {
+	if (strict) {
+	    to.seconds(to.seconds()+1);
+	}
+
 	this.find()
 	    .where('channel').in(['all', channel])
-	    .where('timestamp').lte(to).gt(from)
+	    .where('timestamp').lte(to).gte(from)
 	    .sort({'timestamp': 'ascending'})
 	    .exec(function(err, logs) {
 		if (err) return;
 		if (!logs) return;
+
+		if (strict) {
+		    var unixOffset;
+
+		    unixOffset = moment(logs[0].timestamp);
+		    var fromUnixOffset = from.valueOf();
+		    while (unixOffset != fromUnixOffset) {
+			logs.shift();
+			if (!logs.length) break;
+			unixOffset = moment(logs[0].timestamp).valueOf();
+		    }
+
+		    unixOffset = moment(logs[logs.length-1].timestamp);
+		    to.seconds(to.seconds()-1);
+		    var toUnixOffset = to.valueOf();
+		    while (unixOffset != toUnixOffset) {
+			logs.pop();
+			if (!logs.length) break;
+			unixOffset = moment(logs[logs.length-1].timestamp).valueOf();
+		    }
+		}
+		
 		callback(logs);
 	    });
     },

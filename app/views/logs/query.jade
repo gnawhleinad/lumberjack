@@ -5,4 +5,4 @@ block main
 
 block content
   each log in logs
-    div(class='#{log._type}') !{log.timestamp_markdown} !{log.irssi_markdown} 
+    div(class='#{log._type}', data-timestamp='#{log.timestamp_unix}') !{log.timestamp_markdown} !{log.irssi_markdown} 

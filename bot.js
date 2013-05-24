@@ -90,7 +90,7 @@ client.addListener('join', function(channel, nick, message) {
 	    if (nick !== config.irc.nick) {
 		Log.getLastSeen(channel, nick, now, function(lastSeen) {
 		    var web = chainsaw.getWebUrl();
-		    Log.getLogsFrom(channel, lastSeen, now, function(logs) {
+		    Log.getLogsFrom(channel, lastSeen, now, false, function(logs) {
 			client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
 			if (logs.length <= config.irc.maxMessageEvents) {
 			    logs.forEach(function(log) {

@@ -26,6 +26,7 @@ exports.query = function(req, res) {
     };
 
     var force = false;
+    var strict = false;
 
     var query = {};
     if (req.query.o) {
@@ -37,6 +38,12 @@ exports.query = function(req, res) {
 	    to: date.endOf('day').unix(),
 	};
     } else {
+	strict = req.query.hasOwnProperty('strict');
+	if (strict) {
+	    uType = 'X.SSS';
+	    uRegex = /\d+\.\d{3}/;
+	}
+
 	query = {
 	    from: req.query.f || moment().format(sType),
 	    to: req.query.t || moment().format(sType)
@@ -68,7 +75,7 @@ exports.query = function(req, res) {
 	}
     }
 
-    Log.getLogsFrom(channel, from, to, function(logs) {
+    Log.getLogsFrom(channel, from, to, strict, function(logs) {
 	res.render('logs/query', {
 	    channel: channel,
 	    from: from.utc().format(),

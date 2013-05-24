@@ -73,8 +73,9 @@ html(lang='en')
               input.filter(type='checkbox', id='ModeLog', checked)
               | Mode
          .span10
-           div.content(id='content')
+           div.content(id='content', style='word-wrap: break-word')
    script
+    var share = false;
     $('.query').change(function() {
       var date = $('#date').val();
       var channel = $('#channel').val();
@@ -86,4 +87,51 @@ html(lang='en')
     });
     $('.checkbox :input').change(function() {
       toggleLog($(this).attr('id'));
+    });
+    $('.content').mouseup(function() {
+      var selection = getSelectionHTML();
+      if (!selection.length) return;
+
+      var url = getSelectionURL(selection);
+      var snippet = $('<div>', { 
+                      class: 'dropdown',
+                      id: 'share'
+                    })
+                    .append($('<a>', {
+                              class: 'dropdown-toggle',
+                              id: 'drop',
+                              role: 'button',
+                              text: 'Share Snippet'
+                            })
+                            .attr('data-toggle', 'dropdown')
+                            .append($('<b>', { class: 'caret' })))
+                    .append($('<ul>', {
+                              class: 'dropdown-menu',
+                              role: 'menu'
+                            })
+                            .attr('aria-labelledby', 'drop')
+                            .append($('<li>', { role: 'presentation' })
+                                    .append($('<a>', {
+                                              href: url,
+                                              role: 'menuitem',
+                                              tabindex: '-1',
+                                              text: 'Open'
+                                            }))));
+                            // .append($('<li>', { role: 'presentation' })
+                            //         .append($('<a>', {
+                            //                   href: '#',
+                            //                   id: 'copy',
+                            //                   role: 'menuitem',
+                            //                   tabindex: '-1',
+                            //                   text: 'Copy to Clipboard'
+                            //                 }))));
+
+      var last = selection[selection.length-1];
+      $(snippet).insertAfter($('div[data-timestamp="'+last.getAttribute('data-timestamp')+'"]'));
+      $('.dropdown-toggle').click();
+      share = true;
+    });
+    $(document).click(function() {
+      if (share) $('.dropdown').remove();
+      share = false;
     });
