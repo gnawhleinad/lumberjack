@@ -21,9 +21,16 @@ lumberjack is an irc logger bot.
   - Log an additional channel (permanently or temporarily)
   - Query logs
 
-## Testing Environment
+## Contributing
 
-- debian-6.0.6
-- mongodb-2.2.2
-- ircd-hybrid-7.2.2
-- chromium-browser-24.0.x
+### Prerequisites
+- [Vagrant](http://vagrantup.com/) 
+- [VirtualBox](https://www.virtualbox.org/)
+
+### Environment
+- Ubuntu 12.04.3 (AMD64)
+- irc-hybrid
+- mongodb
+- nodejs
+- irssi
+- git

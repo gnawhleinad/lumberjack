@@ -1,6 +1,6 @@
 #!/bin/bash
 
-install=( "ircd-hybrid" "mongodb" "irssi" )
+install=( "ircd-hybrid" "irssi" "nodejs" "mongodb" "git" )
 
 for i in "${install[@]}"
 do
