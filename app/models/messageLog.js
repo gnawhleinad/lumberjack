@@ -13,7 +13,7 @@ function irssi(messageLog, markdown) {
     var format = '<%s%s> %s'
     if (markdown) format = '<%s**%s**> %s';
 
-    return chainsaw.print(format, markdown, messageLog.access || '', messageLog.nick, messageLog.message);
+    return chainsaw.print(format, markdown, messageLog.access || '', messageLog.nick, chainsaw.printEmbed(messageLog.message));
 };
 
 MessageLogSchema.virtual('irssi').get(function() {
