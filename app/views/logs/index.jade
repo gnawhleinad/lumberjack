@@ -12,7 +12,7 @@ html(lang='en')
     .container-fluid
       .row-fluid
         .span2
-          script
+          script.
             $(function() {
               var now = new Date();
               var endDate = now.getFullYear().toString()+'-'+(now.getMonth()+1).toString()+'-'+now.getDate().toString();
@@ -74,7 +74,7 @@ html(lang='en')
               | Mode
          .span10
            div.content(id='content', style='word-wrap: break-word')
-   script
+   script.
     var share = false;
     $('.query').change(function() {
       var date = $('#date').val();
