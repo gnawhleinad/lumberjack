@@ -80,7 +80,7 @@ html(lang='en')
       var date = $('#date').val();
       var channel = $('#channel').val();
       if (date === '') return;
-      var url = '/query?c='+channel+'&o='+date;
+      var url = './query?c='+channel+'&o='+date;
       $('.content').load(url+' .main');
       var state = { 'date': date, 'channel': channel };
       window.history.pushState(state, '', url);
