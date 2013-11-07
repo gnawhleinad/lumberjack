@@ -88,18 +88,20 @@ client.addListener('join', function(channel, nick, message) {
     async.parallel([
 	function() {
 	    if (nick !== config.irc.nick) {
-		Log.getLastSeen(channel, nick, now, function(lastSeen) {
-		    var web = chainsaw.getWebUrl();
-		    Log.getLogsFrom(channel, lastSeen, now, false, function(logs) {
-			client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
-			if (logs.length <= config.irc.maxMessageEvents) {
-			    logs.forEach(function(log) {
-					client.say(nick, log.irssi);
-			    });
+	    	if (config.irc.enableNotification) {
+				Log.getLastSeen(channel, nick, now, function(lastSeen) {
+				    var web = chainsaw.getWebUrl();
+				    Log.getLogsFrom(channel, lastSeen, now, false, function(logs) {
+					client.say(nick, util.format('Logs from %s since %s', channel, moment(lastSeen).utc()));
+					if (logs.length <= config.irc.maxMessageEvents) {
+					    logs.forEach(function(log) {
+							client.say(nick, log.irssi);
+					    });
+					}
+					client.say(nick, util.format('%s/query?c=%s&f=%s&t=%s', web, channel.substring(1), moment(lastSeen).format('X'), moment(now).format('X')));
+				    });
+				});
 			}
-			client.say(nick, util.format('%s/query?c=%s&f=%s&t=%s', web, channel.substring(1), moment(lastSeen).format('X'), moment(now).format('X')));
-		    });
-		});
 	    }
 	},
 	function() {

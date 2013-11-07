@@ -5,6 +5,7 @@ module.exports = {
 	    server: 'localhost',
 	    nick: 'lumberjack',
 	    maxMessageEvents: 10,
+	    enableNotification: false,
 	    options: {
 			userName: 'lumberjack',
 			realName: 'lumberjack irc logger bot',
