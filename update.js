@@ -19,9 +19,9 @@ var yesterday = moment().subtract('days', 1).endOf('day').toDate();
 
 async.each(config.irc.options.channels, update, function (err) {
     if (err) {
-	process.exit(1);
+    	process.exit(1);
     } else {
-	process.exit(0);
+    	process.exit(0);
     }
 });
 
@@ -31,13 +31,13 @@ function update(channel, updateNext) {
 
     mkdirp.sync(archive);
     var timestampPromise = Log.getUniqueTimestamps(channel, beginning, yesterday, function(timestamp, timestampNext) {
-	chainsaw.createStaticPage(timestamp, channel.substring(1), destination);
-	var createPromise = chainsaw.createStaticPage(timestamp, channel.substring(1), destination);
-	createPromise.then(function() {
-	    timestampNext();
-	});
+    	chainsaw.createStaticPage(timestamp, channel.substring(1), destination);
+    	var createPromise = chainsaw.createStaticPage(timestamp, channel.substring(1), destination);
+    	createPromise.then(function() {
+    	    timestampNext();
+    	});
     });
     timestampPromise.then(function() {
-	updateNext();
+    	updateNext();
     });
 };

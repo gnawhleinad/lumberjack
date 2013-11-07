@@ -6,17 +6,17 @@ module.exports = {
 	    nick: 'lumberjack',
 	    maxMessageEvents: 10,
 	    options: {
-		userName: 'lumberjack',
-		realName: 'lumberjack irc logger bot',
-		port: 6667,
-		channels: ['#rawr'],
-		floodProtection: true,
-		floodProtectionDelay: 1500,
-		autoRejoin: true,
-		autoConnect: false,
-		stripColors: true,
-		channelPrefixes: "#",
-		messageSplit: 512
+			userName: 'lumberjack',
+			realName: 'lumberjack irc logger bot',
+			port: 6667,
+			channels: ['#rawr'],
+			floodProtection: true,
+			floodProtectionDelay: 1500,
+			autoRejoin: true,
+			autoConnect: false,
+			stripColors: true,
+			channelPrefixes: "#",
+			messageSplit: 512
 	    }
 	},
 	web: {

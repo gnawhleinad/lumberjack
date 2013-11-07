@@ -40,13 +40,13 @@ app.listen(port);
 var job = new cronJob({
     cronTime: '42 00 00 * * *',
     onTick: function() {
-	var yesterday = moment().subtract('days', 1).startOf('day');
-	var destination = util.format('%s/public/archive', config.root);
-	channels.forEach(function(channel) {
-	    Log.existsLogsOn(channel, yesterday, function () {
-		chainsaw.createStaticPage(yesterday, channel.substring(1), destination);
-	    });
-	});
+    	var yesterday = moment().subtract('days', 1).startOf('day');
+    	var destination = util.format('%s/public/archive', config.root);
+    	channels.forEach(function(channel) {
+    	    Log.existsLogsOn(channel, yesterday, function () {
+    		chainsaw.createStaticPage(yesterday, channel.substring(1), destination);
+    	    });
+    	});
     },
     start: true
 });
