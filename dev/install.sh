@@ -4,5 +4,5 @@ install=( "ircd-hybrid" "irssi" "nodejs" "mongodb" "git" )
 
 for i in "${install[@]}"
 do
-    eval "bash /vagrant/$i/install.sh &> /dev/null"
+    eval "bash /vagrant/dev/$i/install.sh &> /dev/null"
 done
