@@ -22,8 +22,10 @@ lumberjack is an irc logger bot.
   - Query logs
 
 ## Contributing
-   git clone git@github.com:gnawhleinad/lumberjack.git
-   vagrant up
+```bash
+git clone git@github.com:gnawhleinad/lumberjack.git
+vagrant up
+```
 
 ### Prerequisites
 - [Vagrant](http://vagrantup.com/) 
