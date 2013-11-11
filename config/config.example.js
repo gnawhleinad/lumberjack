@@ -10,7 +10,7 @@ module.exports = {
 			userName: 'lumberjack',
 			realName: 'lumberjack irc logger bot',
 			port: 6667,
-			channels: ['#rawr'],
+			channels: ['#ohana'],
 			floodProtection: true,
 			floodProtectionDelay: 1500,
 			autoRejoin: true,
@@ -22,7 +22,7 @@ module.exports = {
 	},
 	web: {
 	    domain: 'lumberjack',
-	    port: 3000
+	    port: 4224
 	},
 	db: 'mongodb://localhost/lumberjack-dev'
     }
